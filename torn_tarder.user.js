@@ -3,9 +3,9 @@
 // @author      nepherius[2009878]
 // @description Calculates total value of items in trade
 // @match       https://www.torn.com/trade.php
-// @version     1.0.0
+// @version     1.1.0
 // @updateURL   https://raw.githubusercontent.com/Nepherius/userscrips/master/torn_tarder.user.js
-// @supportURL   https://www.torn.com/forums.php#/forums.php?p=threads&f=67&t=16074804&b=0&a=0
+// @supportURL  https://www.torn.com/forums.php#/forums.php?p=threads&f=67&t=16074804&b=0&a=0
 // @require     http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -83,22 +83,36 @@ function setup() {
 function calculateTotal(side) {
     let totalValue = 0
     //Get money
-    const money = $(`.user.${side} .color1`).text().match(/\d+/gm).join('') * 1
+    let moneyAdded = $(`.user.${side} .color1`).text().match(/\d+/gm)
+    console.log(moneyAdded)
+    if (moneyAdded) {
+        totalValue += moneyAdded.join('') * 1
+    }
 
     // Loop through item list
-    $(`.user.${side} .cont .color2 li`).each(function () {
-        let text = $(this).text()
-        let name = text.match(/.+?(?=x\d+)/gm)[0].trim()
-        let quantity = text.match(/x\d+/gm)[0].replace('x', '')
-        let itemStats = getItemByName(name)
-        totalValue += itemStats.market_value * quantity
-    })
+    const itemsArray = $(`.user.${side} .cont .color2 li`)
+    if (itemsArray) {
+        itemsArray.each(function () {
+            let text = $(this).text()
+            let nameRaw = text.match(/.+?(?=x\d+)/gm)
+            if (nameRaw) {
+                let name = nameRaw[0].trim()
+                let quantity = text.match(/x\d+/gm)[0].replace('x', '')
+                let itemStats = getItemByName(name)
+                totalValue += itemStats.market_value * quantity
+            }
+        })
+    }
+
     // Loop through stock list
-    $(`.user.${side} .cont .color4 li`).each(function () {
-        let blockValue = $(this).text().match(/(?<=\(\$)(.*?)(?=\s*total\))/gm)[0].replace(/,/gm, '') * 1
-        totalValue += blockValue
+    const stocksArray = $(`.user.${side} .cont .color4 li`)
+    stocksArray.each(function () {
+        let blockValue = $(this).text().match(/(?<=\(\$)(.*?)(?=\s*total\))/gm)
+        console.log('here', blockValue)
+        if (blockValue) {
+            totalValue += blockValue[0].replace(/,/gm, '') * 1
+        }
     })
-    totalValue += money
 
     //Update total & display
     updateTotal(side, (totalValue).toLocaleString('en-US', {
