@@ -3,7 +3,7 @@
 // @author      nepherius[2009878]
 // @description Calculates total value of items in trade
 // @match       https://www.torn.com/trade.php
-// @version     1.1.0
+// @version     1.1.1
 // @updateURL   https://raw.githubusercontent.com/Nepherius/userscrips/master/torn_tarder.user.js
 // @supportURL  https://www.torn.com/forums.php#/forums.php?p=threads&f=67&t=16074804&b=0&a=0
 // @require     http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js
@@ -84,7 +84,6 @@ function calculateTotal(side) {
     let totalValue = 0
     //Get money
     let moneyAdded = $(`.user.${side} .color1`).text().match(/\d+/gm)
-    console.log(moneyAdded)
     if (moneyAdded) {
         totalValue += moneyAdded.join('') * 1
     }
@@ -108,7 +107,6 @@ function calculateTotal(side) {
     const stocksArray = $(`.user.${side} .cont .color4 li`)
     stocksArray.each(function () {
         let blockValue = $(this).text().match(/(?<=\(\$)(.*?)(?=\s*total\))/gm)
-        console.log('here', blockValue)
         if (blockValue) {
             totalValue += blockValue[0].replace(/,/gm, '') * 1
         }
