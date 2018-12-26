@@ -3,8 +3,9 @@
 // @author      nepherius[2009878]
 // @description Calculates total value of items in trade
 // @match       https://www.torn.com/trade.php
-// @version     0.0.2
+// @version     1.0.0
 // @updateURL   https://raw.githubusercontent.com/Nepherius/userscrips/master/torn_tarder.user.js
+// @supportURL   https://www.torn.com/forums.php#/forums.php?p=threads&f=67&t=16074804&b=0&a=0
 // @require     http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js
 // @grant       GM_getValue
 // @grant       GM_setValue
@@ -17,6 +18,7 @@
 // GM_deleteValue('api_key')
 
 let API_KEY;
+let Items;
 if (!GM_getValue('api_key')) {
     let key = prompt('Please enter your Torn API Key, this will be stored locally!')
     GM_setValue('api_key', key)
@@ -43,8 +45,9 @@ window.addEventListener('hashchange', function (e) {
 function setup() {
     let seller_total_txt = '<font color="gray">Searching for items...</font>';
     let buyer_total_txt = '<font color="gray">Searching for items...</font>';
+
     $(".trade-cont").after(`
-            <div id="seller"  style="width:250px; text-transform: capitalize;">
+            <div id="seller"  style="width:362px; text-transform: capitalize;">
                 <div aria-level="5" class="title-black top-round" role="heading">
                     <span>
                         Total
@@ -57,7 +60,7 @@ function setup() {
         `);
 
     $(".trade-cont").after(`
-        <div id="buyer" class="right" style="width:250px; text-transform: capitalize;">
+        <div id="buyer" class="right" style="width:362px; text-transform: capitalize;">
                 <div aria-level="5" class="title-black top-round" role="heading">
                     <span>
                         Total
@@ -68,39 +71,41 @@ function setup() {
                 </div>
             </div>
         `);
-    getItems(API_KEY).then(items => {
-        calculateSellerTotal(items)
+    getItems(API_KEY).then(() => {
+        //Left user = Seller
+        calculateTotal('left')
+        //Right user = Buyer
+        calculateTotal('right')
     })
 }
 
-// Check each item category
-function calculateSellerTotal(items) {
-    //Get money
-    const money = $('.user.left .color1').text().match(/\d+/gm) * 1
+
+function calculateTotal(side) {
     let totalValue = 0
-    
+    //Get money
+    const money = $(`.user.${side} .color1`).text().match(/\d+/gm).join('') * 1
+
     // Loop through item list
-    $('.user.left .cont .color2 li').each(function () {
+    $(`.user.${side} .cont .color2 li`).each(function () {
         let text = $(this).text()
         let name = text.match(/.+?(?=x\d+)/gm)[0].trim()
         let quantity = text.match(/x\d+/gm)[0].replace('x', '')
-        let itemStats = getItemByName(name, items)
+        let itemStats = getItemByName(name)
         totalValue += itemStats.market_value * quantity
     })
     // Loop through stock list
-    $('.user.left .cont .color4 li').each(function () {
+    $(`.user.${side} .cont .color4 li`).each(function () {
         let blockValue = $(this).text().match(/(?<=\(\$)(.*?)(?=\s*total\))/gm)[0].replace(/,/gm, '') * 1
         totalValue += blockValue
     })
     totalValue += money
-    
+
     //Update total & display
-    updateTotal('seller', (totalValue).toLocaleString('en-US', {
+    updateTotal(side, (totalValue).toLocaleString('en-US', {
         style: 'currency',
         currency: 'USD'
     }))
 }
-
 
 function getItems(api_key) {
     return new Promise((resolve, reject) => {
@@ -109,7 +114,8 @@ function getItems(api_key) {
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4 && xhr.status === 200) {
                 const res = JSON.parse(xhr.responseText)
-                resolve(res.items)
+                Items = res.items
+                resolve()
             }
         };
         xhr.onerror = function () {
@@ -122,15 +128,15 @@ function getItems(api_key) {
     });
 }
 
-function getItemByName(name, items) {
+function getItemByName(name) {
     // case-sensitive and spaces required:
-    return items[Object.keys(items).find(key => items[key].name == name)]
+    return Items[Object.keys(Items).find(key => Items[key].name == name)]
 }
 
 function updateTotal(user, value) {
-    if (user === 'seller') {
+    if (user === 'left') {
         $("#seller_total").html(`<font color="green">${value}</font>`);
-    } else if (user === 'buyer') {
+    } else if (user === 'right') {
         $("#buyer_total").html(`<font color="green">${value}</font>`);
     }
 }
