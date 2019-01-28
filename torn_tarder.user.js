@@ -1,9 +1,11 @@
+'use strict'
 // ==UserScript==
 // @name        Torn Tarder
 // @author      nepherius[2009878]
 // @description Calculates total value of items in trade
 // @match       https://www.torn.com/trade.php
-// @version     1.2.0
+// @connect     api.torn.com
+// @version     1.2.1
 // @updateURL   https://raw.githubusercontent.com/Nepherius/userscrips/master/torn_tarder.user.js
 // @supportURL  https://www.torn.com/forums.php#/forums.php?p=threads&f=67&t=16074804&b=0&a=0
 // @require     http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js
@@ -11,9 +13,9 @@
 // @grant       GM_getValue
 // @grant       GM_setValue
 // @grant       GM_deleteValue
+// @grant       GM_xmlhttpRequest
 // @run-at      document-start
 // ==/UserScript==
-'use strict'
 
 // Uncomment the following line if you enter the wrong api key, comment it again once you've set your key
 // GM_deleteValue('api_key')
@@ -109,20 +111,20 @@ function calculateTotal(side) {
 
 function getItems(api_key) {
     return new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest()
-        xhr.open('GET', `https://api.torn.com/torn/?selections=items&key=${api_key}`, true)
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                const res = JSON.parse(xhr.responseText)
-                Items = res.items
-                resolve()
+        let ret = GM_xmlhttpRequest({
+            method: "GET",
+            url: `https://api.torn.com/torn/?selections=items&key=${api_key}`,
+            onreadystatechange: function (res) {
+                if (res.readyState === 4 && res.status === 200) {
+                    const parsedRes = JSON.parse(res.responseText)
+                    Items = parsedRes.items
+                    resolve()
+                }
+            },
+            onerror: function (err) {
+                console.log(err)
             }
-        };
-        xhr.onerror = function () {
-            console.log(xhr.statusText)
-            reject('Fetch error');
-        };
-        xhr.send(null)
+        })
     }).catch(e => {
         console.log(e)
     });
