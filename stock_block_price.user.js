@@ -5,7 +5,7 @@
 // @description Display to full price required for a block of each stock
 // @match       https://www.torn.com/stockexchange.php
 // @version     0.0.3
-// @updateURL   https://raw.githubusercontent.com/Nepherius/userscrips/master/stock_block_price.user.js
+// @updateURL   https://github.com/Nepherius/userscrips/raw/master/stock_block_price.user.js
 // @require     http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js
 // @require     https://gist.github.com/raw/2625891/waitForKeyElements.js
 // @run-at      document-start
