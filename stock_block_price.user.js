@@ -11,7 +11,6 @@
 // @run-at      document-start
 // ==/UserScript==
 
-//Setup listenet for trade window
 waitForKeyElements(".stock-list", setup)
 
 function setup() {
@@ -23,7 +22,7 @@ function setup() {
         const shareCost = priceBox.text().match(/\d+[,.]\d+([,.]\d+)?/g)
         const owned = $(stock).find('.owned').text().match(/\d+[,.]\d+([,.]\d+)?/g)
         const blockCost = shareCost[0].replace(',', '') * Stocks[abbr]
-        priceBox.html(`<p class="point-block___xpMEi">${toCurrency(blockCost)}</p><p class="point-block___xpMEi" >@ ${toCurrency(Number(shareCost[0].replace(',', '')))}</p>`)
+        priceBox.html(`<p class="point-block___xpMEi">${toCurrency(Number(shareCost[0].replace(',', '')))}</p><p class="point-block___xpMEi" >${toCurrency(blockCost)}</p>`)
     })
 }
 
@@ -62,7 +61,6 @@ const Stocks = {
 }
 
 function toCurrency(amount) {
-    console.log(amount)
     return amount.toLocaleString(
         'en', {
             style: 'currency',
