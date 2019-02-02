@@ -6,7 +6,7 @@
 // @match       https://www.torn.com/trade.php
 // @connect     api.torn.com
 // @version     1.2.1
-// @updateURL   https://raw.githubusercontent.com/Nepherius/userscrips/master/torn_tarder.user.js
+// @updateURL   https://raw.githubusercontent.com/Nepherius/userscripts/master/torn_tarder.user.js
 // @supportURL  https://www.torn.com/forums.php#/forums.php?p=threads&f=67&t=16074804&b=0&a=0
 // @require     http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js
 // @require     https://gist.github.com/raw/2625891/waitForKeyElements.js
