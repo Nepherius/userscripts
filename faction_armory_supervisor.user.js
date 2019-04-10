@@ -4,7 +4,7 @@
 // @author      nepherius[2009878]
 // @description Montior the faction's item usage
 // @match       https://www.torn.com/factions.php*
-// @version     0.0.1
+// @version     0.0.2
 // @updateURL   https://github.com/Nepherius/userscripts/raw/master/faction_armory_supervisor.user.js
 // @require     http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js
 // @require     https://gist.github.com/raw/2625891/waitForKeyElements.js
@@ -154,7 +154,8 @@ function insertTableData(tableData) {
     $("#armoury_supervisor_table tbody").empty();
     for (data in tableData) {
         let e = tableData[data]
-        $('#armoury_supervisor_table > tbody').append(`
+        if (e.Refill + e.SFAK + e.FAK + e.BloodBag + e.Morphine + e.Xanax >= 1) {
+            $('#armoury_supervisor_table > tbody').append(`
             <tr>
                 <td>${data}</td>
                 <td>${e.Refill}</td>
@@ -165,6 +166,7 @@ function insertTableData(tableData) {
                 <td>${e.Xanax}</td>
             </tr>
         `);
+        }
     }
 }
 
