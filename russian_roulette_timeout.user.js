@@ -6,7 +6,7 @@
 // @version     1.0
 // @author      nepherius[2009878]
 // @updateURL   https://github.com/Nepherius/userscripts/raw/master/russian_roulette_timeout.user.js
-// @description 7/22/2022, 5:26:08 PM
+// @description Estimate when a Russian Roulette game will timeout
 // @run-at      document-end
 // ==/UserScript==
 
